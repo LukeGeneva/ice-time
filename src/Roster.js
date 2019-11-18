@@ -1,54 +1,44 @@
 import React from 'react';
 import AddPlayerForm from './AddPlayerForm';
-import PlayerListItem from './PlayerListItem';
 import { useDrop } from 'react-dnd';
+import PlayerList from './PlayerList';
 
 const Roster = () => {
   const [players, setPlayers] = React.useState([]);
+
+  const movePlayer = id => location =>
+    setPlayers(
+      players.map(player => ({
+        ...player,
+        location: player.id === id ? location : player.location
+      }))
+    );
+
   const [, dropOnIce] = useDrop({
     accept: 'player',
-    drop: ({ id }) =>
-      setPlayers(
-        players.map(player => ({
-          ...player,
-          location: player.id === id ? 'ice' : player.location
-        }))
-      )
+    drop: ({ id }) => movePlayer(id)('ice')
   });
   const [, dropOnBench] = useDrop({
     accept: 'player',
-    drop: ({ id }) =>
-      setPlayers(
-        players.map(player => ({
-          ...player,
-          location: player.id === id ? 'bench' : player.location
-        }))
-      )
+    drop: ({ id }) => movePlayer(id)('bench')
   });
 
   const handlePlayerAdded = player => {
     setPlayers([...players, player]);
   };
 
+  const playersOn = location =>
+    players.filter(player => player.location === location);
+
   return (
     <div>
       <div ref={dropOnIce}>
         <h2>Ice</h2>
-        {players
-          .filter(player => player.location === 'ice')
-          .map(player => (
-            <PlayerListItem key={player.name} player={player} />
-          ))}
+        <PlayerList players={playersOn('ice')} />
       </div>
       <div ref={dropOnBench}>
         <h2>Bench</h2>
-        <ul>
-          {players
-            .filter(player => player.location === 'bench')
-            .map(player => (
-              <PlayerListItem key={player.name} player={player} />
-            ))}
-        </ul>
+        <PlayerList players={playersOn('bench')} />
       </div>
       <AddPlayerForm onPlayerAdded={handlePlayerAdded} />
     </div>
