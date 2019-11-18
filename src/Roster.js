@@ -1,12 +1,11 @@
 import React from 'react';
 import AddPlayerForm from './AddPlayerForm';
-import { useDrop } from 'react-dnd';
-import PlayerList from './PlayerList';
+import Location from './Location';
 
 const Roster = () => {
   const [players, setPlayers] = React.useState([]);
 
-  const movePlayer = id => location =>
+  const handlePlayerMoved = ({ id, location }) =>
     setPlayers(
       players.map(player => ({
         ...player,
@@ -14,32 +13,22 @@ const Roster = () => {
       }))
     );
 
-  const [, dropOnIce] = useDrop({
-    accept: 'player',
-    drop: ({ id }) => movePlayer(id)('ice')
-  });
-  const [, dropOnBench] = useDrop({
-    accept: 'player',
-    drop: ({ id }) => movePlayer(id)('bench')
-  });
-
   const handlePlayerAdded = player => {
     setPlayers([...players, player]);
   };
 
-  const playersOn = location =>
-    players.filter(player => player.location === location);
-
   return (
     <div>
-      <div ref={dropOnIce}>
-        <h2>Ice</h2>
-        <PlayerList players={playersOn('ice')} />
-      </div>
-      <div ref={dropOnBench}>
-        <h2>Bench</h2>
-        <PlayerList players={playersOn('bench')} />
-      </div>
+      <Location
+        name="ice"
+        players={players}
+        onPlayerMoved={handlePlayerMoved}
+      />
+      <Location
+        name="bench"
+        players={players}
+        onPlayerMoved={handlePlayerMoved}
+      />
       <AddPlayerForm onPlayerAdded={handlePlayerAdded} />
     </div>
   );
