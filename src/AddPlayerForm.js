@@ -1,11 +1,12 @@
 import React from 'react';
+import createPlayer from './createPlayer';
 
 const AddPlayerForm = ({ onPlayerAdded }) => {
   const [name, setName] = React.useState('');
 
   const handleSubmit = e => {
     e.preventDefault();
-    onPlayerAdded({ name });
+    onPlayerAdded(createPlayer(name));
     setName('');
   };
 
