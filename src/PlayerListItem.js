@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDrag } from 'react-dnd';
+import formatTime from './formatTime';
 
 const PlayerListItem = ({ player }) => {
   const [{ isDragging }, drag] = useDrag({
@@ -13,7 +14,7 @@ const PlayerListItem = ({ player }) => {
 
   return (
     <li ref={drag} key={player.name} style={{ opacity }}>
-      {player.name}
+      {player.name} - TOI: {formatTime(player.timeOnIce)}
     </li>
   );
 };
