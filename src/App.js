@@ -12,19 +12,23 @@ function App() {
   const [players, setPlayers] = React.useState([]);
   const [isInPlay, setIsInPlay] = React.useState(false);
 
-  React.useEffect(() => {
-    if (!isInPlay) return;
-    const timeout = setTimeout(() => {
+  const incrementIceTimes = React.useCallback(
+    () =>
       setPlayers(
         players.map(player => ({
           ...player,
           timeOnIce:
             player.location === 'ice' ? player.timeOnIce + 1 : player.timeOnIce
         }))
-      );
-    }, 1000);
+      ),
+    [players]
+  );
+
+  React.useEffect(() => {
+    if (!isInPlay) return;
+    const timeout = setTimeout(incrementIceTimes, 1000);
     return () => clearTimeout(timeout);
-  }, [isInPlay, players]);
+  }, [isInPlay, incrementIceTimes]);
 
   const handlePlayerMoved = ({ id, location }) =>
     setPlayers(
